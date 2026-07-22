@@ -1379,15 +1379,15 @@
                         <form class="contact-form" id="contactForm">
                             <div class="form-group">
                                 <label for="name">Full Name</label>
-                                <input type="text" id="name" class="form-control" placeholder="John Doe" required>
+                                <input type="text" id="name" name="name" class="form-control" placeholder="John Doe" required>
                             </div>
                             <div class="form-group">
                                 <label for="email">Email Address</label>
-                                <input type="email" id="email" class="form-control" placeholder="john@example.com" required>
+                                <input type="email" id="email" name="email" class="form-control" placeholder="john@example.com" required>
                             </div>
                             <div class="form-group">
                                 <label for="message">Message</label>
-                                <textarea id="message" class="form-control" placeholder="How can I help you?" required></textarea>
+                                <textarea id="message" name="message" class="form-control" placeholder="How can I help you?" required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
                                 Send Message
@@ -1610,7 +1610,6 @@
                 contactForm.addEventListener('submit', (e) => {
                     e.preventDefault();
                     
-                    // Simulate form submission
                     const btn = contactForm.querySelector('button[type="submit"]');
                     const originalText = btn.innerHTML;
                     
@@ -1618,19 +1617,42 @@
                     btn.style.opacity = '0.7';
                     btn.style.pointerEvents = 'none';
 
-                    // Fake API delay
-                    setTimeout(() => {
+                    // Collect form data
+                    const formData = new FormData(contactForm);
+
+                    // Send data to FormSubmit API (Directly to your email)
+                    fetch("https://formsubmit.co/ajax/elahimaqbool855@gmail.com", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
                         btn.innerHTML = originalText;
                         btn.style.opacity = '1';
                         btn.style.pointerEvents = 'all';
                         contactForm.reset();
                         
-                        // Show Toast
+                        // Show Success Toast
+                        document.getElementById('toastMessage').innerText = "Message sent successfully!";
                         toast.classList.add('show');
                         setTimeout(() => {
                             toast.classList.remove('show');
                         }, 4000);
-                    }, 1500);
+                    })
+                    .catch(error => {
+                        btn.innerHTML = originalText;
+                        btn.style.opacity = '1';
+                        btn.style.pointerEvents = 'all';
+                        
+                        // Show Error Toast
+                        document.getElementById('toastMessage').innerText = "Error sending message.";
+                        document.querySelector('.toast').style.borderColor = "red";
+                        document.querySelector('.toast-icon').style.color = "red";
+                        toast.classList.add('show');
+                        setTimeout(() => {
+                            toast.classList.remove('show');
+                        }, 4000);
+                    });
                 });
             });
         </script>
